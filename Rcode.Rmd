@@ -12,7 +12,7 @@ Please find below the R code for the development of short-term predictions of E.
 This work was carried out as part of the UK Biotechnology and Biological Science Research Council (BBRSC) and UK National Environmental Research Council
 (NERC) funded 'ShellEye' project (BB/M026698/1).   
 
-Due to the confidential nature of some of the research materials supporting this publication, not all of the data can be made accessible to other researchers. Part of the codes are based on the work by Jez Smith & Rob Thomas (www.eco-explore.co.uk) and you are kindly asked if you use this R code, please cite as below:  
+Due to the confidential nature of some of the research materials supporting this publication, not all of the data can be made accessible to other researchers. Part of the code is based on the work by Jez Smith & Rob Thomas (www.eco-explore.co.uk) and you are kindly asked if you use this R code, please cite as below:  
 
 authors: Schmidt, W., Smith, J. and Thomas, R.  
 orcid: https://orcid.org/0000-0003-1035-6054  
