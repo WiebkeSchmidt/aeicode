@@ -1,0 +1,142 @@
+---
+title: R code for the development of short-term predictions of E.coli and biotoxins
+  in shellfish
+author: "Wiebke Schmidt, Jez Smith and Rob Thomas"
+output:
+  word_document: default
+---
+
+# README
+Please find below the R code for the development of short-term predictions of E.coli and biotoxins in shellfish, as used within the publication: Schmidt et al., 2018. "A generic approach for the development of short-term predictions of Escherichia coli and biotoxins in shellfish". Aquaculture Environment Interactions 10:173-185. https://doi.org/10.3354/aei00265  
+
+This work was carried out as part of the UK Biotechnology and Biological Science Research Council (BBRSC) and UK National Environmental Research Council
+(NERC) funded 'ShellEye' project (BB/M026698/1).   
+
+Due to the confidential nature of some of the research materials supporting this publication, not all of the data can be made accessible to other researchers. Part of the codes are based on the work by Jez Smith & Rob Thomas (www.eco-explore.co.uk) and you are kindly asked if you use this R code, please cite as below:  
+
+authors: Schmidt, W., Smith, J. and Thomas, R.  
+orcid: https://orcid.org/0000-0003-1035-6054  
+title: "R code for the development of short-term predictions of E.coli and biotoxins in shellfish"  
+version: 1.0  
+doi:  
+date-released: 2019-03-19  
+
+# R code
+Please not the R code & variable names have been defined in general terms, please adjust to your own dataset. Additioanlly, please note that the "eval = FALSE" parameter was added to the code chunk, please change to "eval = TRUE"" to run the code.  
+
+## 1. Load libraries
+If not installed, use install.packages("")
+```{r load libraries, eval=FALSE}
+# Load libraries, if not installed, use install.packages("")
+library(leaps)
+library(bestglm)
+library(arm) 
+library(MuMIn)
+library(car)
+library(nlme)
+library(mgcv) 
+library(lattice)
+```
+
+## Generalized linear model development
+```{r GLM development, eval=FALSE}
+# Load data and define variables, such as rainfall = rain, etc.
+
+# Create data frame of environmental variables and E.coli/ biotoxin as y
+Xybt1<-data.frame(cbind (rain, river, sst, windspeed, winddirection, solarradiation, y))
+
+# Method 'CV', default cross-validation method is delete-d with 1000 replications
+model1<-bestglm(Xybt1, family=gaussian, IC="CV", t=10,method='exhaustive') 
+print.bestglm(model1)
+summary.bestglm(model1)
+# RMSE for model 1
+MSE1<-model1$Subsets[,"CV"]
+round(sqrt(mean(MSE1)),2)
+
+# method 'HTF' based on Hastie et al., 2009
+model2<-bestglm(Xybt1,family=gaussian,IC="CV", CVArgs = list(Method="HTF", K=10, REP=50),method='exhaustive')                                
+print.bestglm(model2)
+summary.bestglm(model2)
+# RMSE for model 2
+MSE2<-model2$Subsets[,"CV"]
+round(sqrt(mean(MSE2)),2)
+
+# method 'DH' based on Davison and Hinkley (1997, Algorithm 6.5, p.295)
+model3<-bestglm(Xybt1,family=gaussian,IC="CV", CVArgs = list(Method="DH", K=2, REP=100), method='exhaustive')
+print.bestglm(model3)
+summary.bestglm(model3)
+# RMSE for model 3
+MSE3b<-model3$Subsets[,"CV"]
+round(sqrt(mean(MSE3)),2)
+
+# method Leave-one-out Cross-Validation
+model4<-bestglm(Xybt1,family=gaussian,IC="LOOCV")
+print.bestglm(model4)
+summary.bestglm(model4)
+# RMSE for model 4
+MSE4b<-model4$Subsets[,"LOOCV"]
+round(sqrt(mean(MSE4)),2)
+```
+
+## Averaged GLM development
+```{r average GLM development, eval=FALSE}
+# Build a "global model" incorporating all main effects and/or interactions of interest
+
+model5<-glm(y ~ rain + river + sst + windspeed + winddirection + solarradiation,
+            family = Gamma (link = log))
+
+summary(model5)
+summary.lm(model5)
+plot(model5) 
+AIC(model5)
+
+# Standardise the global model's parameters
+stdz.model5 <- standardize(model5, standardize.y = FALSE) 
+summary(stdz.model5)
+
+# Create a set of candidate models 
+options(na.action = "na.fail")
+model.set <- dredge(stdz.model5)
+model.set
+
+# Select the top models, using delta Akaike's Information Criterion < 2 as decision metric  
+top.models <- get.models(model.set, subset = delta <2)
+top.models
+
+# Obtain parameter estimates averaged across the top.models set
+averaged.model <- model.avg(top.models)  
+summary(averaged.model)
+# Check variance inflation factors 
+vif(model5) 
+```
+
+## Generalized additive model development
+```{r GAM development, eval=FALSE}
+# Create model
+model6<-gam(y ~ s(rain, k=4) + 
+                s(river, k=4)+ 
+                s(sst, k=4)  + 
+                s(windspeed, k=4) + 
+                s(winddirection, k=4) +
+                s(solarradiation, k=4),family = Gamma (link = "log")) 
+
+# Check model & EDF & adjust model, if necessary
+summary (model6) 
+gam.check(model6)
+plot(model6, shade=T, scale=0) 
+# compare adjusted GAM models using Akaike Information Criterion (AIC)
+AIC()
+```
+
+## Evaluation & Prediction of developed models
+```{r Evaluation & Prediction of models, eval=FALSE}
+# 1. Re-run choosen best models (glm, average glm and gam)
+# 2. Make Predictions using independent dataset 
+glmPredictions<-predict(bestglm, newdata=newdata, type="response", se.fit = T)
+avglmPredictions<-predict(newavmodel, newdata=newdata, type="response", se.fit = T) 
+gamPredictions<-predict(bestgam, newdata=newdata, type="response", se.fit = T)
+# Create a table of new predictions and save as csv.file
+Predictions<-cbind(newdata,glmPredictions,avglmPredictions, gamPredictions) 
+write.csv(Predictions, "prediction-outcome.csv", row.names=F)
+# 3. Use RMSE and Bias to assess performance of model prediction in comparions to actual observations (Ecoli/ Biotoxin)
+```
