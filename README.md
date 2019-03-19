@@ -10,7 +10,6 @@ This work was carried out as part of the UK Biotechnology and Biological Science
 Part of the code is based on the work by Jez Smith & Rob Thomas (www.eco-explore.co.uk) and you are kindly asked if you use this R code, please cite it as below.
 
 authors: Schmidt, W., Smith, J. and Thomas, R.  
-orcid: https://orcid.org/0000-0003-1035-6054  
 title: "R code for the development of short-term predictions of E.coli and biotoxins in shellfish"  
 version: 1.0  
 doi:10.5281/zenodo.2598466  
