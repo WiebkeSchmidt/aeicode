@@ -13,5 +13,5 @@ authors: Schmidt, W., Smith, J. and Thomas, R.
 orcid: https://orcid.org/0000-0003-1035-6054  
 title: "R code for the development of short-term predictions of E.coli and biotoxins in shellfish"  
 version: 1.0  
-doi: 10.5281/zenodo.2598466
+doi:10.5281/zenodo.2598466  
 date-released: 2019-03-19
