@@ -7,7 +7,7 @@ output:
 ---
 
 # README
-Please find below the R code for the development of short-term predictions of E.coli and biotoxins in shellfish, as used within the publication: Schmidt et al., 2018. "A generic approach for the development of short-term predictions of Escherichia coli and biotoxins in shellfish". Aquaculture Environment Interactions 10:173-185. https://doi.org/10.3354/aei00265  
+Please find below the R code for the development of short-term predictions of E.coli and biotoxins in shellfish, as used within the publication: Schmidt et al., 2018. "A generic approach for the development of short-term predictions of Escherichia coli and biotoxins in shellfish". Aquaculture Environment Interactions 10:173-185, https://doi.org/10.3354/aei00265  
 
 This work was carried out as part of the UK Biotechnology and Biological Science Research Council (BBRSC) and UK National Environmental Research Council
 (NERC) funded 'ShellEye' project (BB/M026698/1).   
